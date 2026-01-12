@@ -28,7 +28,7 @@ export default function SwapPage() {
   useEffect(() => {
     setIsMounted(true);
     const connect = async () => {
-      if (window.ethereum) {
+      if (typeof window !== 'undefined' && window.ethereum) {
         try {
           const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
           if (accs.length > 0) setAccount(getAddress(accs[0]));
@@ -41,12 +41,18 @@ export default function SwapPage() {
   const fetchData = async (userAddr: string) => {
     try {
       const client = createClient({ chain: studionet });
+      // PENTING: Hapus properti 'abi' di sini agar lolos build Vercel
       const coinData = await client.readContract({
-        address: COIN_ADDR, abi: ABI, functionName: 'get_balance_of', args: [userAddr.toLowerCase()],
+        address: COIN_ADDR, 
+        functionName: 'get_balance_of', 
+        args: [userAddr.toLowerCase()],
       });
       setXCoinBalance(coinData.toString());
+
       const goldData = await client.readContract({
-        address: DEX_ADDR, abi: ABI, functionName: 'get_balance', args: [userAddr],
+        address: DEX_ADDR, 
+        functionName: 'get_balance', 
+        args: [userAddr],
       });
       setGoldBalance(goldData.toString());
     } catch (err) { console.error("Data fetch error:", err); }
@@ -62,6 +68,7 @@ export default function SwapPage() {
     setStatus({ type: 'idle', msg: 'Mengambil 1000 X-COIN gratis...' });
     try {
       const client = createClient({ chain: studionet });
+      // ABI hanya digunakan di encodeFunctionData (milik viem)
       const callData = encodeFunctionData({ abi: ABI, functionName: 'faucet', args: [] });
       await client.sendTransaction({ account: account as `0x${string}`, to: COIN_ADDR, data: callData, gas: BigInt(2000000) } as any);
       setStatus({ type: 'success', msg: 'Koin gratis berhasil dikirim!' });
