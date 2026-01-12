@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #000000;
+    color: #ffffff;
+    @apply antialiased;
+  }
+}
+
+@layer utilities {
+  .brand-card {
+    background: #0d0d12;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
