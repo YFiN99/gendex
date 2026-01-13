@@ -14,6 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body suppressHydrationWarning className="bg-black text-white">
+        {/* WAJIB ADA: Providers harus membungkus children */}
         <Providers>{children}</Providers>
       </body>
     </html>
