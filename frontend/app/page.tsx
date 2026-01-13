@@ -43,7 +43,7 @@ export default function SwapPage() {
         ],
       });
 
-      if (response && response == "0x") {
+      if (response && response !== "0x") {
         const numericBalance = parseInt(response, 16);
         setBalanceX(numericBalance.toLocaleString());
       }
