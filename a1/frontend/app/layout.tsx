@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Providers } from "./providers"; // Kita akan buat file ini setelah ini
+import { Providers } from "./providers";
 
 export const metadata = {
   title: "GenDEX - Swap",
