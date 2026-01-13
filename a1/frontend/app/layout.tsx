@@ -1,4 +1,5 @@
 import "./globals.css";
+import { Providers } from "./providers"; // Kita akan buat file ini setelah ini
 
 export const metadata = {
   title: "GenDEX - Swap",
@@ -12,15 +13,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        {/* Load SDK GenLayer */}
-        <script 
-          src="https://cdn.jsdelivr.net/npm/genlayer-js-sdk@latest/dist/index.bundle.js"
-          defer
-        ></script>
-      </head>
       <body suppressHydrationWarning className="bg-black text-white">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
