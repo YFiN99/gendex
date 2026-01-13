@@ -21,7 +21,7 @@ export default function SwapPage() {
   useEffect(() => { setMounted(true); }, []);
 
   const handleFaucet = async () => {
-    if (!isConnected) { toast.error("Connect wallet dulu!"); return; }
+    if (!isConnected) return;
     setIsClaiming(true);
     const tId = toast.loading("Claiming 1000 TOKEN X...");
     try {
@@ -37,7 +37,7 @@ export default function SwapPage() {
   };
 
   const handleSwap = async () => {
-    if (!isConnected) { toast.error("Connect wallet dulu!"); return; }
+    if (!isConnected) return;
     setIsSwapping(true);
     setLastTxHash(null);
     const tId = toast.loading("Processing Swap...");
@@ -56,7 +56,7 @@ export default function SwapPage() {
   if (!mounted) return null;
 
   return (
-    <main style={styles.container} suppressHydrationWarning>
+    <main style={styles.container}>
       <div style={styles.card}>
         <div style={styles.header}>
           <div>
@@ -68,7 +68,6 @@ export default function SwapPage() {
           </button>
         </div>
 
-        {/* INPUT SELL */}
         <div style={styles.inputBox}>
           <div style={styles.inputHeader}>
             <span>Sell</span>
@@ -84,7 +83,6 @@ export default function SwapPage() {
           <button onClick={() => setIsReversed(!isReversed)} style={styles.arrowButton}>↓↑</button>
         </div>
 
-        {/* INPUT BUY */}
         <div style={styles.inputBox}>
           <div style={styles.inputHeader}>
             <span>Buy</span>
@@ -96,7 +94,6 @@ export default function SwapPage() {
           </div>
         </div>
 
-        {/* TOMBOL SWAP */}
         <div style={{marginTop: '20px'}}>
           {!isConnected ? (
             <button onClick={connectWallet} style={styles.mainButton}>CONNECT WALLET</button>
@@ -107,7 +104,6 @@ export default function SwapPage() {
           )}
         </div>
 
-        {/* TRANSACTION HASH AREA */}
         {lastTxHash && (
           <div style={styles.hashContainer}>
             <p style={styles.hashTitle}>TRANSACTION HASH:</p>
@@ -119,7 +115,7 @@ export default function SwapPage() {
         )}
 
         <div style={styles.footerInfo}>
-          DEX: {DEX_CONTRACT_ADDRESS.slice(0, 22)}...
+          DEX: {DEX_CONTRACT_ADDRESS.slice(0, 20)}...
           {isConnected && <div onClick={disconnectWallet} style={styles.disconnectText}>Disconnect Wallet</div>}
         </div>
       </div>
@@ -132,7 +128,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   card: { background: '#0d0d0d', padding: '25px', borderRadius: '24px', border: '1px solid #1a1a1a', width: '400px' },
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' },
   title: { color: '#fff', fontSize: '20px', fontWeight: 'bold' },
-  statusDot: { color: '#10b981', fontSize: '10px', marginTop: '4px' },
+  statusDot: { color: '#10b981', fontSize: '10px' },
   faucetBtn: { background: '#10b981', color: '#000', border: 'none', padding: '6px 12px', borderRadius: '10px', fontSize: '10px', fontWeight: 'bold', cursor: 'pointer' },
   inputBox: { background: '#141414', padding: '16px', borderRadius: '16px', border: '1px solid #1f1f1f' },
   inputHeader: { display: 'flex', justifyContent: 'space-between', color: '#555', fontSize: '11px', marginBottom: '8px' },
