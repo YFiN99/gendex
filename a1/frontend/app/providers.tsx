@@ -1,13 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { WalletProvider } from "@/lib/genlayer/WalletProvider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  // Use useState to ensure QueryClient is only created once per component lifecycle
-  // This prevents the client from being recreated on every render
+  // Mencegah error Hydration: memastikan hanya render di browser
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -23,7 +28,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <WalletProvider>
-        {children}
+        {/* Hanya render children jika sudah di client side agar tombol wallet muncul */}
+        {mounted ? children : <div style={{ visibility: 'hidden' }}>{children}</div>}
       </WalletProvider>
       <Toaster
         position="top-right"
