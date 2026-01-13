@@ -1,6 +1,9 @@
 "use client";
 
-import { useState } from "react";
+// Paksa Next.js agar tidak error saat proses build di Vercel
+export const dynamic = "force-dynamic";
+
+import { useState, useEffect } from "react";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 
 export default function SwapPage() {
@@ -8,84 +11,98 @@ export default function SwapPage() {
   const { disconnect } = useDisconnect();
   const { connect, connectors } = useConnect();
   
+  const [mounted, setMounted] = useState(false);
   const [amount, setAmount] = useState("5");
+
+  // Efek ini memastikan tombol hanya muncul di browser (Client-Side)
+  // Ini solusi ampuh untuk error 'WagmiProviderNotFoundError'
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Jika belum 'mounted', jangan tampilkan apa-apa dulu untuk menghindari error Vercel
+  if (!mounted) return null;
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-black text-white p-4">
-      {/* Container Utama */}
+      {/* Box Utama Swap */}
       <div className="w-full max-w-md bg-[#121212] border border-zinc-800 rounded-3xl p-6 shadow-2xl">
         
-        {/* Header & Logo */}
+        {/* Header Bagian Atas */}
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold tracking-tight">build labs</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-white">build labs</h1>
           
-          {/* TOMBOL KONEKSI DYNAMIC */}
+          {/* LOGIC TOMBOL CONNECT WALLET */}
           {!isConnected ? (
-            connectors.map((connector) => (
-              <button
-                key={connector.uid}
-                onClick={() => connect({ connector })}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 px-4 rounded-xl transition-all"
-              >
-                Connect Wallet
-              </button>
-            ))
+            <div className="flex gap-2">
+              {connectors.map((connector) => (
+                <button
+                  key={connector.uid}
+                  onClick={() => connect({ connector })}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 px-4 rounded-xl transition-all shadow-lg active:scale-95"
+                >
+                  Connect {connector.name}
+                </button>
+              ))}
+            </div>
           ) : (
-            <button
-              onClick={() => disconnect()}
-              className="bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs py-2 px-4 rounded-xl transition-all border border-zinc-700"
-            >
-              {address?.slice(0, 6)}...{address?.slice(-4)}
-            </button>
+            <div className="flex items-center gap-2">
+              <div className="bg-zinc-800 border border-zinc-700 px-3 py-2 rounded-xl text-xs text-zinc-300">
+                {address?.slice(0, 6)}...{address?.slice(-4)}
+              </div>
+              <button
+                onClick={() => disconnect()}
+                className="bg-red-500/10 hover:bg-red-500/20 text-red-500 text-xs p-2 rounded-xl border border-red-500/20 transition-all"
+                title="Disconnect Wallet"
+              >
+                ✕
+              </button>
+            </div>
           )}
         </div>
 
-        {/* Card Stats */}
+        {/* Tampilan Saldo/Stats */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800">
-            <p className="text-zinc-500 text-xs mb-1">X-COIN (Wallet)</p>
-            <p className="text-blue-400 text-xl font-bold">0</p>
+            <p className="text-zinc-500 text-[10px] uppercase font-bold mb-1">X-COIN Balance</p>
+            <p className="text-blue-400 text-xl font-bold">0.00</p>
           </div>
           <div className="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800">
-            <p className="text-zinc-500 text-xs mb-1">GOLD (DEX)</p>
-            <p className="text-yellow-500 text-xl font-bold">0</p>
+            <p className="text-zinc-500 text-[10px] uppercase font-bold mb-1">GOLD Balance</p>
+            <p className="text-yellow-500 text-xl font-bold">0.00</p>
           </div>
         </div>
 
-        {/* Input Section */}
+        {/* Form Input Swap */}
         <div className="space-y-4">
-          <div className="relative">
+          <div className="bg-black border border-zinc-800 rounded-2xl p-4 focus-within:border-indigo-500 transition-all">
+            <label className="text-zinc-500 text-xs mb-2 block">Amount to Swap</label>
             <input
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full bg-black border border-zinc-800 rounded-2xl py-4 px-6 text-2xl font-medium focus:outline-none focus:border-indigo-500 transition-colors"
-              placeholder="0"
+              className="w-full bg-transparent text-3xl font-medium focus:outline-none text-white"
+              placeholder="0.0"
             />
           </div>
 
-          {/* Tombol Swap Utama */}
+          {/* Tombol Eksekusi Swap */}
           <button
             disabled={!isConnected}
-            className={`w-full py-4 rounded-2xl font-bold text-lg transition-all shadow-lg ${
+            className={`w-full py-5 rounded-2xl font-black text-lg tracking-widest transition-all shadow-xl ${
               isConnected 
-                ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 active:scale-[0.98]" 
-                : "bg-zinc-800 text-zinc-500 cursor-not-allowed"
+                ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 active:scale-[0.98] text-white" 
+                : "bg-zinc-800 text-zinc-500 cursor-not-allowed uppercase"
             }`}
           >
-            {isConnected ? "SWAP NOW" : "Please Connect Wallet"}
+            {isConnected ? "EXECUTE SWAP" : "Wallet Required"}
           </button>
         </div>
 
-        {/* Footer */}
-        <div className="mt-6 flex justify-center">
-          <button className="text-zinc-600 text-xs hover:text-zinc-400 flex items-center gap-1 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            Refresh Data
-          </button>
-        </div>
+        {/* Info Tambahan */}
+        <p className="mt-4 text-center text-zinc-600 text-[10px]">
+          Powered by GenLayer Network • {isConnected ? 'Network Ready' : 'Network Disconnected'}
+        </p>
       </div>
     </main>
   );
