@@ -1,6 +1,6 @@
-                                                                   👀  (  DEX GenLayer )  👀
+                                                                
+👀  (  DEX GenLayer )  👀 
 
- 
 ## 👀 About
 This project includes the boilerplate code for a GenLayer use case implementation, specifically a football bets game.
 
