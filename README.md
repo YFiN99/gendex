@@ -1,4 +1,4 @@
-                                                                        👀  (  DEX GenLayer )  👀
+                                                                   👀  (  DEX GenLayer )  👀
 
  
 ## 👀 About
